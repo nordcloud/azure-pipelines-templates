@@ -1,0 +1,9 @@
+# Version 1.0
+# Mainatiner: Dariusz Dwornikowski
+steps:
+- task: Cache@2
+  inputs:
+    key: 'go | "$(Agent.OS)" | go.sum | go.mod'
+    restoreKeys: |
+        go | "$(Agent.OS)" | go.sum
+    path: $(GOPATH)/pkg/mod
