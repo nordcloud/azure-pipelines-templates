@@ -1,8 +1,35 @@
 # Version 1.0
-# Mainatiner: Dariusz Dwornikowski
+# Maintainer: Dariusz Dwornikowski
+# Parameters:
+# version sets the downloaded  version of assume role arn
+# role is required 
 parameters:
   version: 0.3.4
+  role: ''
+  external_id: ''
+
 steps:
+- bash: |
+    if [ -z "$ROLE" ]; then
+      echo "##vso[task.logissue type=error;]Missing template parameter \"role\""
+      echo "##vso[task.complete result=Failed;]"
+    fi
 - script: |
     wget https://github.com/nordcloud/assume-role-arn/releases/download/v${{ parameters.version }}/assume-role-arn-linux -O ./assume-role-arn
     chmod +x ./assume-role-arn
+- script: |
+    set -e
+    if [ -n "$EXTERNAL_ID" ]; then 
+      eval $(./assume-role-arn -r ${{ parameters.role }} -e ${{ parameters.external_id }})
+    else 
+      eval $(./assume-role-arn -r ${{ parameters.role }})
+    fi 
+    if [ -n "$AWS_ACCESS_KEY_ID" ]; then
+      echo "Setting variables"
+      echo "##vso[task.setvariable variable=NEW_AWS_ACCESS_KEY_ID]$AWS_ACCESS_KEY_ID"
+      echo "##vso[task.setvariable variable=NEW_AWS_SECRET_ACCESS_KEY]$AWS_SECRET_ACCESS_KEY"
+      echo "##vso[task.setvariable variable=NEW_AWS_SESSION_TOKEN]$AWS_SESSION_TOKEN"
+    else 
+      echo "##vso[task.logissue type=error;]AWS_ACCESS_KEY_ID not set \"solution\""
+      echo "##vso[task.complete result=Failed;]"
+    fi
