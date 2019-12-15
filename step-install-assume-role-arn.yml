@@ -1,19 +1,32 @@
-# Version 1.0
+# Version 1.1
 # Maintainer: Dariusz Dwornikowski
 # Parameters:
 # version sets the downloaded  version of assume role arn
-# role is required 
+# role is required
+# external_id is optional
+# aws_access_key_id is required
+# aws_secret_access_key is required
 parameters:
   version: 0.3.4
   role: ''
   external_id: ''
+  aws_access_key_id: ''
+  aws_secret_access_key: ''  
 
 steps:
 - bash: |
     if [ -z "$ROLE" ]; then
-      echo "##vso[task.logissue type=error;]Missing template parameter \"role\""
+      echo "##vso[task.logissue type=error;]Missing template parameter"
       echo "##vso[task.complete result=Failed;]"
     fi
+    if [ -z "$AWS_ACCESS_KEY_ID"]; then 
+      echo "##vso[task.logissue type=error;]Missing aws_access_key_id parameter"
+      echo "##vso[task.complete result=Failed;]"
+    fi 
+    if [ -z "$AWS_SECRET_ACCESS_KEY"]; then 
+      echo "##vso[task.logissue type=error;]Missing aws_secret_access_key parameter"
+      echo "##vso[task.complete result=Failed;]"
+    fi 
 - script: |
     wget https://github.com/nordcloud/assume-role-arn/releases/download/v${{ parameters.version }}/assume-role-arn-linux -O ./assume-role-arn
     chmod +x ./assume-role-arn
