@@ -56,3 +56,4 @@ steps:
   env:
     SRC_AWS_ACCESS_KEY_ID: ${{ parameters.src_aws_access_key_id }}
     SRC_AWS_SECRET_ACCESS_KEY: ${{ parameters.src_aws_secret_access_key }}
+    EXTERNAL_ID: ${{ parameters.external_id }}
