@@ -1,0 +1,55 @@
+# Version 1.1
+# Maintainer: Dariusz Dwornikowski
+# Parameters:
+# version sets the downloaded  version of assume role arn
+# role is required
+# external_id is optional
+# src_aws_access_key_id is required
+# src_aws_secret_access_key is required
+parameters:
+  version: 0.3.4
+  role: ''
+  external_id: ''
+  src_aws_access_key_id: ''
+  src_aws_secret_access_key: ''  
+
+steps:
+- bash: |
+    if [ -z "$ROLE" ]; then
+      echo "##vso[task.logissue type=error;]Missing template parameter"
+      echo "##vso[task.complete result=Failed;]"
+    fi
+    if [ -z "$SRC_AWS_ACCESS_KEY_ID"]; then 
+      echo "##vso[task.logissue type=error;]Missing aws_access_key_id parameter"
+      echo "##vso[task.complete result=Failed;]"
+    fi 
+    if [ -z "$SRC_AWS_SECRET_ACCESS_KEY"]; then 
+      echo "##vso[task.logissue type=error;]Missing aws_secret_access_key parameter"
+      echo "##vso[task.complete result=Failed;]"
+    fi 
+  env:
+    ROLE: ${{ parameters.role }}
+    SRC_AWS_ACCESS_KEY_ID: ${{ parameters.src_aws_access_key_id }}
+    SRC_AWS_SECRET_ACCESS_KEY: ${{ parameters.src_aws_secret_access_key }}
+- script: |
+    wget https://github.com/nordcloud/assume-role-arn/releases/download/v${{ parameters.version }}/assume-role-arn-linux -O ./assume-role-arn
+    chmod +x ./assume-role-arn
+- script: |
+    set -e
+    if [ -n "$EXTERNAL_ID" ]; then 
+      eval $(AWS_ACCESS_KEY_ID=$SRC_AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$SRC_AWS_SECRET_ACCESS_KEY ./assume-role-arn -r ${{ parameters.role }} -e ${{ parameters.external_id }})
+    else 
+      eval $(AWS_ACCESS_KEY_ID=$SRC_AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$SRC_AWS_SECRET_ACCESS_KEY ./assume-role-arn -r ${{ parameters.role }})
+    fi 
+    if [ -n "$AWS_ACCESS_KEY_ID" ]; then
+      echo "Setting variables"
+      echo "##vso[task.setvariable variable=AWS_ACCESS_KEY_ID;issecret=true]$AWS_ACCESS_KEY_ID"
+      echo "##vso[task.setvariable variable=AWS_SECRET_ACCESS_KEY;issecret=true]$AWS_SECRET_ACCESS_KEY"
+      echo "##vso[task.setvariable variable=AWS_SESSION_TOKEN;issecret=true]$AWS_SESSION_TOKEN"
+    else 
+      echo "##vso[task.logissue type=error;]AWS_ACCESS_KEY_ID not set \"solution\""
+      echo "##vso[task.complete result=Failed;]"
+    fi
+  env:
+    SRC_AWS_ACCESS_KEY_ID: ${{ parameters.src_aws_access_key_id }}
+    SRC_AWS_SECRET_ACCESS_KEY: ${{ parameters.src_aws_secret_access_key }}
