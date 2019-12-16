@@ -11,6 +11,11 @@ PAT recommendations:
 * if you go multi pipeline, keep your pipeline ymls in `.azure-pipelines` 
 * for templates create: `.azure-pipelines/templates` directory and keep the templates there
 
+## Templates
+
+* `step-assume-role-arn.yml` - sets credentials of the assumed role
+* `step-cache-go-mod.yml` - sets caching of the `$GOPATH/mod/pkg` directory
+
 ## Adding new template
 
 Adding new template should be done by a PR to this repository. File naming convention is `{type}-yourname.yml`, where `{type}` should be either: `step, job or stagr` depending on the type of template. 
