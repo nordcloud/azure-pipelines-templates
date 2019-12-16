@@ -31,9 +31,11 @@ steps:
     ROLE: ${{ parameters.role }}
     SRC_AWS_ACCESS_KEY_ID: ${{ parameters.src_aws_access_key_id }}
     SRC_AWS_SECRET_ACCESS_KEY: ${{ parameters.src_aws_secret_access_key }}
+  displayName: Check parameters
 - script: |
     wget https://github.com/nordcloud/assume-role-arn/releases/download/v${{ parameters.version }}/assume-role-arn-linux -O ./assume-role-arn
     chmod +x ./assume-role-arn
+  displayName: Download assume-role-arn v${{ parameters.version }}
 - script: |
     set -e
     if [ -n "$EXTERNAL_ID" ]; then 
@@ -50,6 +52,7 @@ steps:
       echo "##vso[task.logissue type=error;]AWS_ACCESS_KEY_ID not set \"solution\""
       echo "##vso[task.complete result=Failed;]"
     fi
+  displayName: Assume role
   env:
     SRC_AWS_ACCESS_KEY_ID: ${{ parameters.src_aws_access_key_id }}
     SRC_AWS_SECRET_ACCESS_KEY: ${{ parameters.src_aws_secret_access_key }}
