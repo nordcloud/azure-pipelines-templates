@@ -1,8 +1,8 @@
 # azure-pipelines-templates
 
-Hi, 👋. This repository holds azure pipeline templates that can be reused in our projects. 
+Hi, 👋. This repository holds azure pipeline templates that can be reused in your projects. 
 
-## How to use ?
+## How to use the templates ?
 
 Documentation can be found in Microsoft pages: https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops#passing-parameters. 
 
@@ -16,9 +16,22 @@ PAT recommendations:
 * `step-assume-role-arn.yml` - sets credentials of the assumed role
 * `step-cache-go-mod.yml` - sets caching of the `$GOPATH/mod/pkg` directory
 
-## Adding new template
+## Usage example
 
-Adding new template should be done by a PR to this repository. File naming convention is `{type}-yourname.yml`, where `{type}` should be either: `step, job or stagr` depending on the type of template. 
+If you copy a template to your repo:
+
+```yaml
+      - template: templates/step-cache-go-mod.yml
+        parameters:
+          path:  $(GOPATH)/pkg/mod
+```
+
+Or if you want to reference it from a foreign repository check it here (https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops#using-other-repositories). 
+
+
+## Contributing 
+
+Adding new template should be done by a PR to this repository. File naming convention is `{type}-yourname.yml`, where `{type}` should be either: `step, job or stage` depending on the type of template. 
 
 Inside the template file add a comment manifest, example:
 
@@ -28,17 +41,14 @@ Inside the template file add a comment manifest, example:
 # Parameters:
 # version: version of the tool (string)
 ```
-You can also add any comment that explains how template parameters are to used. 
 
+You can also add any comment that explains how template parameters are to used.
 
-## Usage example
+## License 
 
-```yaml
-      - template: templates/step-cache-go-mod.yml
-        parameters:
-          path:  $(GOPATH)/pkg/mod
-```
+MIT
 
-## Owners
+## Authors 
 
-Onwers of the repo is PAT
+Platform and Tools, Nordcloud, Poland
+
