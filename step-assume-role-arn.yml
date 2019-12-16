@@ -19,12 +19,12 @@ steps:
       echo "##vso[task.logissue type=error;]Missing template parameter"
       echo "##vso[task.complete result=Failed;]"
     fi
-    if [ -z "$SRC_AWS_ACCESS_KEY_ID"]; then 
-      echo "##vso[task.logissue type=error;]Missing aws_access_key_id parameter"
+    if [ -z "$SRC_AWS_ACCESS_KEY_ID" ]; then 
+      echo "##vso[task.logissue type=error;]Missing src_aws_access_key_id parameter"
       echo "##vso[task.complete result=Failed;]"
     fi 
-    if [ -z "$SRC_AWS_SECRET_ACCESS_KEY"]; then 
-      echo "##vso[task.logissue type=error;]Missing aws_secret_access_key parameter"
+    if [ -z "$SRC_AWS_SECRET_ACCESS_KEY" ]; then 
+      echo "##vso[task.logissue type=error;]Missing src_aws_secret_access_key parameter"
       echo "##vso[task.complete result=Failed;]"
     fi 
   env:
