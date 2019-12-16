@@ -14,7 +14,7 @@ PAT recommendations:
 ## Templates
 
 * `step-assume-role-arn.yml` - sets credentials of the assumed role
-* `step-cache-go-mod.yml` - sets caching of the `$GOPATH/mod/pkg` directory
+* `step-setup-go-cache.yml` - sets golang and go mod caching of the `$GOPATH/mod/pkg` directory
 
 ## Usage example
 
