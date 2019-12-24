@@ -1,0 +1,24 @@
+# Version 1.0
+# Maintainer: Kamil Piotrowski
+# Description: This remplate install SSH private key required to download private repositories. It adds gitbucket.org and github.com to the known hosts too.
+# Parameters:
+#   ssh_public_key SSH public key. default: variable $(SSH_PUBLIC_KEY)
+#   ssh_private_key: Name of the Azure secured file with SSH private key. default: ssh_private_key
+#   You can override above default settings.
+# Usage:
+#   - job: TestLambda
+#   steps:
+#   - template: templates/setup-ssh.yml
+
+parameters:
+  ssh_public_key: $(SSH_PUBLIC_KEY)
+  ssh_private_key_file: ssh_private_key
+
+steps:
+- task: InstallSSHKey@0
+  inputs:
+    knownHostsEntry: |
+      bitbucket.org ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==
+      github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+    sshPublicKey: ${{ parameters.ssh_public_key }}
+    sshKeySecureFile: ${{ parameters.ssh_private_key_file }}
