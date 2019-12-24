@@ -8,10 +8,10 @@
 # src_aws_secret_access_key is required
 parameters:
   version: 0.3.4
-  role: ''
-  external_id: ''
-  src_aws_access_key_id: ''
-  src_aws_secret_access_key: ''  
+  role: $(DEPLOYMENT_ROLE)
+  external_id: $(DEPLOYMENT_EXTERNAL_ID)
+  src_aws_access_key_id: $(SRC-AWS-ACCESS-KEY-ID)
+  src_aws_secret_access_key: $(SRC-AWS-SECRET-ACCESS-KEY)
 
 steps:
 - bash: |
