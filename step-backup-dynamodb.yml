@@ -1,0 +1,52 @@
+# Version 1.0
+# Maintainer: Kamil Piotrowski
+# Description:  This template can be used to Backup dynamoDB tables (ex. before releasing new code to production).
+#               This step requires AWS credentials. Remember to assume role before using it. You can use step-assume-role-arn.yml from this repository
+# Parameters:
+#   prefix: Prefix used to filter dynamoDB tables. Only tables with name that starts with the provided prefix will be backeup up.
+
+# Usage:
+#   - job: DynamoBackup
+#     steps:
+#     - template: templates/dynamodb-backup.yml
+#       parameters:
+#         prefix: my-tool
+
+parameters:
+  prefix: ""
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.7'
+- script: |
+    pip install boto3
+  displayName: Install dependencies
+- task: PythonScript@0
+  inputs:
+    scriptSource: inline
+    script: |
+      import boto3
+      import os
+
+      client = boto3.client('dynamodb')
+
+      response = client.list_tables(
+          ExclusiveStartTableName=os.getenv("PREFIX"),
+      ).get('TableNames')
+
+      for name in response:
+          if not name.startswith(os.getenv("PREFIX")):
+              continue
+
+          resp = client.create_backup(
+              TableName=name,
+              BackupName='DeploymentBackup'
+          )
+          print(f"Created backup for table {name}: {resp['BackupDetails']['BackupArn']}")
+  displayName: "Backup DynamoDB tables"
+  env:
+    AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
+    AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+    AWS_SESSION_TOKEN: $(AWS_SESSION_TOKEN)
+    PREFIX: ${{ parameters.prefix }}
