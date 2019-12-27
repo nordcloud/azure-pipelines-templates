@@ -2,10 +2,10 @@
 # Maintainer: Dariusz Dwornikowski
 # Parameters:
 # version sets the downloaded  version of assume role arn
-# role is required
-# external_id is optional
-# src_aws_access_key_id is required
-# src_aws_secret_access_key is required
+# role is required; default: uses $(DEPLOYMENT_ROLE) variable
+# external_id is optional; default: uses $(DEPLOYMENT_EXTERNAL_ID) variable
+# src_aws_access_key_id is required; default: uses $(SRC-AWS-ACCESS-KEY-ID) variable
+# src_aws_secret_access_key is required; default: uses $(SRC-AWS-SECRET-ACCESS-KEY) variable
 parameters:
   version: 0.3.4
   role: $(DEPLOYMENT_ROLE)

@@ -15,6 +15,8 @@ PAT recommendations:
 
 * `step-assume-role-arn.yml` - sets credentials of the assumed role
 * `step-setup-go-cache.yml` - sets golang and go mod caching of the `$GOPATH/mod/pkg` directory
+* `step-install-ssh-key` - installs SSH key and adds github and bithucket to known hosts. PUBLIC_KEY and secure file with PRIVATE key is required.
+* `step-backup-dynamodb` - backups dynamoDB tables with the given prefix.
 
 ## Usage example
 
