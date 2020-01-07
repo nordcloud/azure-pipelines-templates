@@ -1,0 +1,65 @@
+# Version 1.0
+# Maintainer: Kamil Piotrowski
+# Description:  This template triggers amplify console release
+#               It waits for the release process to be completed and displays the deployment status.
+#               This step requires AWS credentials. Remember to assume role before using it. You can use step-assume-role-arn.yml from this repository
+# Parameters:
+#   amplify_app_id: ID of the amplify application [required]
+#   production_branch: Name of the production branch configured in the amplify console [required]
+
+parameters:
+  amplify_app_id: ""
+  production_branch: ""
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.7'
+- script: |
+    pip install boto3 requests
+  displayName: Install dependencies
+- task: PythonScript@0
+  inputs:
+    scriptSource: inline
+    script: |
+      import boto3
+      import time
+      import requests
+
+      client = boto3.client('amplify')
+      job_details = client.start_job(
+        appId="${{ parameters.amplify_app_id }}",
+        branchName="${{ parameters.production_branch }}",
+        jobType="RELEASE")
+      job_id = job_details['jobSummary']['jobId']
+      print(f"Created new deployment job with ID: {job_id}")
+
+      status = None
+      print("Waiting for the job to be completed")
+
+      while status is None or status == "RUNNING":
+        print("...")
+        time.sleep(30)
+
+        job_state = client.get_job(
+          appId="${{ parameters.amplify_app_id }}",
+          branchName="${{ parameters.production_branch }}",
+          jobId=job_id)
+        status = job_state['job']['summary']['status']
+
+      print(f"\nRelease job {status}\n")
+      for step in job_state['job']['steps']:
+        log_url = step.get('logUrl')
+        if log_url:
+          r = requests.get(log_url)
+          print(r.text)
+
+        print(f"\nStep {step['stepName']} {step['status']}\n")
+        if step['status'] != "SUCCEED":
+          raise Exception(f"Release railed for the stage {step['stepName']} with status {step['status']}")
+
+  displayName: "Trigger amplify release"
+  env:
+    AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
+    AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+    AWS_SESSION_TOKEN: $(AWS_SESSION_TOKEN)
