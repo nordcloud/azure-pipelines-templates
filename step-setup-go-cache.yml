@@ -9,7 +9,7 @@
 # Parameters:
 # path: path to pkg/mod to cache (example $(GOPATH)/pkg/mod)
 parameters:
-  path: $(GOPATH)/pkg/mod'
+  path: '$(GOPATH)/pkg/mod'
 
 steps:
 - script: |
