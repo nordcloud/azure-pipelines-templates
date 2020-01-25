@@ -31,7 +31,7 @@
 parameters:
   - name: 'validationRegexp'
     type: 'string'
-    default: '^v[0-9](.[0-9]){1,3}$'
+    default: '^v[0-9]+(.[0-9]+){1,3}$'
   - name: 'failOnNotFound'
     type: 'boolean'
     default: false
