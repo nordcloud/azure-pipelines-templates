@@ -17,5 +17,5 @@ steps:
     key: 'go | "$(Agent.OS)" | go.sum | go.mod'
     restoreKeys: |
         go | "$(Agent.OS)" | go.sum
-    path: '$(GOPATH)/pkg/mod'
+    path: '${{ parameters.path }}'
   displayName: 'Set go mod cache'
