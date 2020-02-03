@@ -1,29 +1,21 @@
 # Version 1.2
 # Maintainer: Dariusz Dwornikowski
 # You need your global variables set anyways
-# variables:
-# GOBIN:  '$(GOPATH)/bin' # Go binaries path
-# GOROOT: '/usr/local/go1.13' # Go installation path
-# GOPATH: '/gopath' # Go workspace path
-# GO111MODULE: on
 # Parameters:
 # path: path to pkg/mod to cache (example $(GOPATH)/pkg/mod)
+# version: golang version
 parameters:
   path: '$(GOPATH)/pkg/mod'
+  version: '1.13.5'
 
 steps:
-- script: |
-    mkdir -p '$(GOBIN)'
-    mkdir -p '$(GOPATH)/pkg'
-    shopt -s extglob
-    shopt -s dotglob
-    echo '##vso[task.prependpath]$(GOBIN)'
-    echo '##vso[task.prependpath]$(GOROOT)/bin'
-  displayName: 'Set up the Go workspace'
+- task: GoTool@0
+  inputs:
+    version: ${{ parameters.version }}
 - task: Cache@2
   inputs:
     key: 'go | "$(Agent.OS)" | go.sum | go.mod'
     restoreKeys: |
         go | "$(Agent.OS)" | go.sum
-    path: ${{ parameters.path }}
+    path: '$(GOPATH)/pkg/mod'
   displayName: 'Set go mod cache'
