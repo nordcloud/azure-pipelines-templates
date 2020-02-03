@@ -1,4 +1,4 @@
-# Version 1.2
+# Version 1.3
 # Maintainer: Dariusz Dwornikowski
 # You need your global variables set anyways
 # Parameters:
@@ -12,10 +12,12 @@ steps:
 - task: GoTool@0
   inputs:
     version: ${{ parameters.version }}
+- script: |
+    mkdir -p $(GOPATH)
 - task: Cache@2
   inputs:
     key: 'go | "$(Agent.OS)" | go.sum | go.mod'
     restoreKeys: |
-        go | "$(Agent.OS)" | go.sum
+        go | "$(Agent.OS)" | go.sum | go.mod
     path: '${{ parameters.path }}'
   displayName: 'Set go mod cache'
