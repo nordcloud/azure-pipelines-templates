@@ -1,0 +1,53 @@
+# Version 1.0
+# Maintainer: Kamil Piotrowski
+# Description: This template can sign macOS binary and publish it as an artifact.
+#              Output artifact contains all files form the input one together with the signing result.
+#              It requires Apple Developer ID Application certificate added to ADO secure files.
+#              Both source binary and GON configuration files must be in the input artifacts.
+#              It assumes that configuration file uses $APPLE_ID_PASSWD environment variable.
+# Parameters:
+#   cert_file_name [required] - is the P12 certificate file name stored in ADO secured files
+#   cert_file_passwd [required] - P12 certificate password
+#   input_artifact_name [required] - Input artifact name containing binary to sign and config file
+#   output_artifact_name [required] - Output artifact name. Signed file will be saved in this artifact.
+#   sign_config_file_name [optional] (def: sign-config.json) - Configuration file name.
+#   apple_id_passwd [required] - Apple ID password used for authentication during the notarization process.
+parameters:
+  cert_file_name: ""
+  cert_file_passwd: ""
+  input_artifact_name: ""
+  output_artifact_name: ""
+  sign_config_file_name: "sign-config.json"
+  apple_id_passwd: ""
+
+steps:
+- task: InstallAppleCertificate@2
+  inputs:
+    certSecureFile: "${{ parameters.cert_file_name }}"
+    certPwd: "${{ parameters.cert_file_passwd }}"
+    keychain: "temp"
+- task: DownloadPipelineArtifact@2
+  inputs:
+    artifact: "${{ parameters.input_artifact_name }}"
+    path: $(Build.SourcesDirectory)/bin
+- script: |
+    curl -LO https://github.com/mitchellh/gon/releases/download/v0.2.2/gon_0.2.2_macos.zip
+    unzip gon_0.2.2_macos.zip
+    chmod +x ./gon
+  displayName: InstallGON
+  workingDirectory: $(Build.SourcesDirectory)/bin
+- script: |
+    ./gon ${{ parameters.sign_config_file_name }}
+  displayName: SignMac OS binary
+  workingDirectory: $(Build.SourcesDirectory)/bin
+  env:
+    APPLE_ID_PASSWD: ${{ parameters.apple_id_passwd }}
+- script: |
+    rm gon
+    rm gon_0.2.2_macos.zip
+  displayName: CleanGON
+  workingDirectory: $(Build.SourcesDirectory)/bin
+- task: PublishPipelineArtifact@1
+  inputs:
+    artifactName: "${{ parameters.output_artifact_name }}"
+    targetPath: $(Build.SourcesDirectory)/bin
