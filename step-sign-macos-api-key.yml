@@ -6,6 +6,9 @@
 #              Both source binary and GON configuration files must be in the input artifacts.
 #              It assumes that API KEY is used for authentication. Username and password is not supported due to security reasons.
 #              It uses the Nordcloud forked version of GON tool (we added support for the API keys authorization)
+# Requirements:
+#              vmImage: macOS-10.15
+#              Xcode version: >= 11.0              
 # Parameters:
 #   cert_file_name [required] - is the P12 certificate file name stored in ADO secured files
 #   cert_file_passwd [required] - P12 certificate password
