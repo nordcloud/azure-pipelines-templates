@@ -1,0 +1,79 @@
+# Version 1.0
+# Maintainer: Kamil Piotrowski
+# Description: This template can sign macOS binary and publish it as an artifact.
+#              Output artifact contains all files form the input one together with the signing result.
+#              It requires Apple Developer ID Application certificate added to ADO secure files.
+#              Both source binary and GON configuration files must be in the input artifacts.
+#              It assumes that API KEY is used for authentication. Username and password is not supported due to security reasons.
+#              It uses the Nordcloud forked version of GON tool (we added support for the API keys authorization)
+# Requirements:
+#              vmImage: macOS-10.15
+#              Xcode version: >= 11.0
+# Parameters:
+#   cert_file_name [required] - is the P12 certificate file name stored in ADO secured files
+#   cert_file_passwd [required] - P12 certificate password
+#   input_artifact_name [required] - Input artifact name containing binary to sign and config file
+#   output_artifact_name [required] - Output artifact name. Signed file will be saved in this artifact.
+#   sign_config_file_name [optional] (def: sign-config.json) - Configuration file name.
+#   api_key_file_name [required] - is the P8 Apple API Key used for authentication.
+parameters:
+  go_version: "1.13.5"
+  cert_file_name: ""
+  cert_file_passwd: ""
+  input_artifact_name: ""
+  output_artifact_name: ""
+  sign_config_file_name: "sign-config.json"
+  api_key_file_name: ""
+
+jobs:
+- job: SignMacOSBinary
+  pool:
+    vmImage: 'macOS-10.15'
+  steps:
+  - task: GoTool@0
+    inputs:
+      version: "${{ parameters.go_version }}"
+
+  - task: InstallAppleCertificate@2
+    inputs:
+      certSecureFile: "${{ parameters.cert_file_name }}"
+      certPwd: "${{ parameters.cert_file_passwd }}"
+      keychain: "temp"
+
+  - task: DownloadSecureFile@1
+    name: appleApiKey
+    displayName: 'Download Apple API key'
+    inputs:
+      secureFile: '${{ parameters.api_key_file_name }}'
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: "${{ parameters.input_artifact_name }}"
+      path: $(Build.SourcesDirectory)/bin
+
+  - script: |
+      git clone https://github.com/nordcloud/gon.git
+      cd gon
+      make build
+      cp ./dist/gon ../bin/gon
+    displayName: InstallGON
+    workingDirectory: $(Build.SourcesDirectory)
+
+  - script: |
+      mkdir -p ~/.appstoreconnect/private_keys
+      chmod a+x $(appleApiKey.secureFilePath)
+      cp $(appleApiKey.secureFilePath) ~/.appstoreconnect/private_keys/
+      ./gon -log-level=info ${{ parameters.sign_config_file_name }}
+    displayName: SignMac OS binary
+    workingDirectory: $(Build.SourcesDirectory)/bin
+
+  - script: |
+      rm -rf private_keys
+      rm gon
+    displayName: CleanGON
+    workingDirectory: $(Build.SourcesDirectory)/bin
+
+  - task: PublishPipelineArtifact@1
+    inputs:
+      artifactName: "${{ parameters.output_artifact_name }}"
+      targetPath: $(Build.SourcesDirectory)/bin
