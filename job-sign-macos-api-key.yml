@@ -17,6 +17,7 @@
 #   sign_config_file_name [optional] (def: sign-config.json) - Configuration file name.
 #   api_key_file_name [required] - is the P8 Apple API Key used for authentication.
 parameters:
+  go_version: "1.13.5"
   cert_file_name: ""
   cert_file_passwd: ""
   input_artifact_name: ""
@@ -31,7 +32,7 @@ jobs:
   steps:
   - task: GoTool@0
     inputs:
-      version: $(GO_VERSION)
+      version: "${{ parameters.go_version }}"
 
   - task: InstallAppleCertificate@2
     inputs:
