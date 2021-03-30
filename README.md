@@ -20,6 +20,7 @@ Documentation can be found in Microsoft pages: https://docs.microsoft.com/en-us/
 * `step-backup-dynamodb` - backups dynamoDB tables with the given prefix.
 * `step-set-tag-output` - git tag helper validation.
 * `step-trigger-amplify-console-build` - triggers Amplify pipeline build so that you have visbility in your Azure pipelines
+* `job-trigger-pipeline-multiple-times` - A pipeline that triggers a secondary pipeline an x amount of times. Used in a project previously to trigger a Virtual Machine creation pipeline with identical parameters.
 
 
 ## Usage example

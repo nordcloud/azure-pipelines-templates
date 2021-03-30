@@ -1,0 +1,52 @@
+# Version 1.0
+# Creator: Mika Haapsaari & Pawel Lukasiak
+# Description:  This template triggers another pipeline a defined number of times.
+#               Can be used for example to trigger a resource deployment pipeline with an identical set of parameters.  
+#
+# Parameters:
+#   environment - Azure DevOps defined deployment environment
+#   pipelinesSecurityToken [required] - PAT token that has read and execute pipeline access
+#   devOpsOrganization [required] - URI of the Azure DevOps Organisation
+#   devOpsProject [required] - name of the Azure DevOps project
+#   devOpsPipeline [required] - name of the pipeline to be triggered
+#   numberOfDeployments [required] - integer for pipeline trigger
+
+parameters:
+  environment: default-environment
+  pipelinesSecurityToken: ""
+  devOpsOrganization: ""
+  devOpsProject: ""
+  devOpsPipeline: ""
+  numberOfDeployments: 2
+
+jobs:
+- deployment: deploy
+  timeoutInMinutes: 120
+  displayName: Deploy pipeline multiple times
+  pool:
+    vmImage: 'ubuntu-latest'
+  environment: ${{ parameters.environment }}
+
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - script: |
+            echo Organization ${{parameters.devOpsOrganization}}
+            echo Project ${{parameters.devOpsProject}}
+            echo Pipeline ${{parameters.devOpsPipeline}}
+            export AZURE_DEVOPS_EXT_PAT=${{parameters.pipelinesSecurityToken}}
+            export BUILD_DEFINITION=`az pipelines build definition list --name '${{parameters.devOpsPipeline}}' --org '${{parameters.devOpsOrganization}}' --project '${{parameters.devOpsProject}}' | jq -r '.[].id'`
+            echo BuildDefinition ${BUILD_DEFINITION}
+            export DEV_OPS_PROJECT='${{parameters.devOpsProject}}'
+            echo DevOpsProject ${DEV_OPS_PROJECT}
+            export DEV_OPS_PROJECT_NOSPACES=${DEV_OPS_PROJECT/ /%20}
+            echo DevOpsProjectNoSpaces ${DEV_OPS_PROJECT_NOSPACES}
+            for (( i=1; i<=${{parameters.numberOfDeployments}}; i++ ))
+            do
+              curl -X POST ${{parameters.devOpsOrganization}}/${DEV_OPS_PROJECT_NOSPACES}/_apis/pipelines/${BUILD_DEFINITION}/runs\?api-version\=6.0-preview.1 \
+                    -H "Content-Type: application/json" \
+                    -u "${AZURE_DEVOPS_EXT_PAT}": \
+                    -d '{"stagesToSkip": [],"templateParameters": {"parameter": "${{parameters.parametervalue}}"},"variables": {}}'
+            done
+          displayName: 'Queue pipeline ${{parameters.numberOfDeployments}} time(s)'
