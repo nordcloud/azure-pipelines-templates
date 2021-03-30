@@ -74,5 +74,5 @@ MIT
 
 ## Authors 
 
-Platform and Tools, Nordcloud, Poland
+Nordcloud, and IBM company
 
