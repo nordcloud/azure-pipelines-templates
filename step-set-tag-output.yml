@@ -41,7 +41,7 @@ parameters:
 
 steps:
 - script: |
-    VERSION_TAG="$(git describe --tags --abbrev=0 2>/dev/null)"
+    VERSION_TAG="$( echo $(Build.SourceBranch) | sed -e 's#refs/tags/##')"
     if [[ -z "$VERSION_TAG" ]]; then
         printf "\n***\nRelease tag not found. Deploy will be skipped.\n***\n"
         case "${{ parameters.failOnNotFound }}" in
