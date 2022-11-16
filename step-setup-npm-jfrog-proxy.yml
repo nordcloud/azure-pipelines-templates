@@ -25,8 +25,8 @@ steps:
       installCustomVersion: true
       cliVersion: ${{ parameters.jf_cli_version }}
   - script: |
-      export PATH=$PATH:/opt/hostedtoolcache/jf/${{ parameters.jf_cli_version }}/x64/
-      ls -lartR /opt/hostedtoolcache/jf/
+      export PATH=$PATH:/__t/jf/${{ parameters.jf_cli_version }}/x64/
+      ls -lartR /__t/jf/
       echo 'JF_SERVER_ID: ${{ parameters.jf_server_id }}'
       jf --version
       jf c add ${{ parameters.jf_server_id }} --url=https://${{ parameters.jf_server_id }}/ --interactive=false --access-token=${{ parameters.jf_access_token }}
