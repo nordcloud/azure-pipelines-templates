@@ -1,0 +1,35 @@
+# Version 1.0.0
+# Maintainer: Tadas Kazlauskas
+# You need your global variables set anyways
+# Parameters:
+# JF_SERVER_ID: JFrog server id (default: nordcloud.jfrog.io)
+# JF_ACCESS_TOKEN: JFrog access token
+# JF_NPM_REPO: JFrog virtual repository name
+# JFROG_CLI_VERSION: JFrog CLI version
+
+parameters:
+- name: jf_server_id 
+  default: ''
+- name: jf_npm_repo 
+  default: ''
+- name: jf_access_token 
+  default: ''
+- name: jf_cli_version 
+  default: ''
+
+steps:
+  - task: JFrogToolsInstaller@1
+    inputs:
+      artifactoryConnection: "JFrog Artifactory V2"
+      cliInstallationRepo: "jfrog-cli"
+      installCustomVersion: true
+      cliVersion: ${{ parameters.jf_cli_version }}
+  - script: |
+      export PATH=$PATH:/opt/hostedtoolcache/jf/${{ parameters.jf_cli_version }}/x64/
+      echo 'JF_SERVER_ID: ${{ parameters.jf_server_id }}'
+      echo 'jf test'
+      jf c add $(JF_SERVER_ID) --url=https://${{ parameters.jf_server_id }}/ --interactive=false --access-token=$(JF_ACCESS_TOKEN)
+      jf npm-config --repo-resolve ${{ parameters.jf_npm_repo }} --server-id-resolve ${{ parameters.jf_server_id }}
+      jf rt ping
+      jf c show
+    displayName: "Configure JFrog proxy for NPM"
