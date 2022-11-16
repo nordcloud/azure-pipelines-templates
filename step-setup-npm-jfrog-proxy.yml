@@ -15,7 +15,7 @@ parameters:
 - name: jf_access_token 
   default: ''
 - name: jf_cli_version 
-  default: '2.28.1'
+  default: 2.28.1
 
 steps:
   - task: JFrogToolsInstaller@1
@@ -27,7 +27,7 @@ steps:
   - script: |
       export PATH=$PATH:/opt/hostedtoolcache/jf/${{ parameters.jf_cli_version }}/x64/
       echo 'JF_SERVER_ID: ${{ parameters.jf_server_id }}'
-      echo 'jf test'
+      jf --version
       jf c add ${{ parameters.jf_server_id }} --url=https://${{ parameters.jf_server_id }}/ --interactive=false --access-token=${{ parameters.jf_access_token }}
       jf npm-config --repo-resolve ${{ parameters.jf_npm_repo }} --server-id-resolve ${{ parameters.jf_server_id }}
       jf rt ping
