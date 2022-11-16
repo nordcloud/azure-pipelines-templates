@@ -11,7 +11,7 @@ parameters:
 - name: jf_server_id 
   default: ''
 - name: jf_npm_repo 
-  default: 'npm-virtual'
+  default: npm-virtual
 - name: jf_access_token 
   default: ''
 - name: jf_cli_version 
