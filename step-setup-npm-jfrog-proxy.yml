@@ -9,28 +9,21 @@
 
 parameters:
 - name: jf_server_id 
-  default: ''
+  default: 
 - name: jf_npm_repo 
   default: npm-virtual
+- name: jf_user 
+  default: pat-devops
 - name: jf_access_token 
-  default: ''
-- name: jf_cli_version 
-  default: 2.28.1
+  default: 
 
 steps:
-  - task: JFrogToolsInstaller@1
-    inputs:
-      artifactoryConnection: "JFrog Artifactory V2"
-      cliInstallationRepo: "jfrog-cli"
-      installCustomVersion: true
-      cliVersion: ${{ parameters.jf_cli_version }}
   - script: |
-      export PATH=$PATH:/__t/jf/${{ parameters.jf_cli_version }}/x64/
-      ls -lartR /__t/jf/
-      echo 'JF_SERVER_ID: ${{ parameters.jf_server_id }}'
-      jf --version
-      jf c add ${{ parameters.jf_server_id }} --url=https://${{ parameters.jf_server_id }}/ --interactive=false --access-token=${{ parameters.jf_access_token }}
-      jf npm-config --repo-resolve ${{ parameters.jf_npm_repo }} --server-id-resolve ${{ parameters.jf_server_id }}
-      jf rt ping
-      jf c show
+      echo "Creating ~/.npmrc"
+      echo "registry=https://${{ parameters.jf_server_id }}/artifactory/api/npm/${{ parameters.jf_npm_repo }}/" >> ~/.npmrc
+      echo "@nordcloud:registry=https://${{ parameters.jf_server_id }}/artifactory/api/npm/${{ parameters.jf_npm_repo }}/" >> ~/.npmrc
+      echo -n "//${{ parameters.jf_server_id }}/artifactory/api/npm/${{ parameters.jf_npm_repo }}/:" >> ~/.npmrc
+      curl -u${{ parameters.jf_user }}:${{ parameters.jf_access_token }} https://${{ parameters.jf_server_id }}/artifactory/api/npm/auth >> ~/.npmrc
+      echo "email = pat-devops@nordcloud.com" >> ~/.npmrc
+      cat ~/.npmrc
     displayName: "Configure JFrog proxy for NPM"
