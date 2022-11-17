@@ -20,13 +20,11 @@ parameters:
 steps:
   - script: |
       pwd
-      echo "HOME: $HOME"
-      echo "./$(ROOT_DIR)"
       echo "Creating ~/.npmrc"
-      echo "registry=https://${{ parameters.jf_server_id }}/artifactory/api/npm/${{ parameters.jf_npm_repo }}/" >> ./$(ROOT_DIR)/.npmrc
-      echo "@nordcloud:registry=https://${{ parameters.jf_server_id }}/artifactory/api/npm/${{ parameters.jf_npm_repo }}/" >> ./$(ROOT_DIR)/.npmrc
-      echo -n "//${{ parameters.jf_server_id }}/artifactory/api/npm/${{ parameters.jf_npm_repo }}/:" >> ./$(ROOT_DIR)/.npmrc
-      curl -u${{ parameters.jf_user }}:${{ parameters.jf_access_token }} https://${{ parameters.jf_server_id }}/artifactory/api/npm/auth >> ./$(ROOT_DIR)/.npmrc
+      echo "registry=https://${{ parameters.jf_server_id }}/artifactory/api/npm/${{ parameters.jf_npm_repo }}/" > .npmrc
+      echo "@nordcloud:registry=https://${{ parameters.jf_server_id }}/artifactory/api/npm/${{ parameters.jf_npm_repo }}/" >> .npmrc
+      echo -n "//${{ parameters.jf_server_id }}/artifactory/api/npm/${{ parameters.jf_npm_repo }}/:" >> .npmrc
+      curl -u${{ parameters.jf_user }}:${{ parameters.jf_access_token }} https://${{ parameters.jf_server_id }}/artifactory/api/npm/auth >> .npmrc
       echo "email = pat-devops@nordcloud.com" >> ./$(ROOT_DIR)/.npmrc
       cat ./$(ROOT_DIR)/.npmrc
     displayName: "Configure JFrog proxy for NPM"
