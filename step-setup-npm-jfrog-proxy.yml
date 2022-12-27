@@ -30,4 +30,4 @@ steps:
       echo "email = pat-devops@nordcloud.com" >> .npmrc
       cat .npmrc
     displayName: "Configure JFrog proxy for NPM"
-    workingDirectory: ${{work_dir}}
+    workingDirectory: ${{ work_dir }}
