@@ -21,7 +21,6 @@ parameters:
 
 steps:
   - script: |
-      cd ${{ work_dir }}
       pwd
       echo "Creating .npmrc"
       echo "registry=https://${{ parameters.jf_server_id }}/artifactory/api/npm/${{ parameters.jf_npm_repo }}/" > .npmrc
@@ -31,3 +30,4 @@ steps:
       echo "email = pat-devops@nordcloud.com" >> .npmrc
       cat .npmrc
     displayName: "Configure JFrog proxy for NPM"
+    workingDirectory: ${{ parameters.work_dir }}
