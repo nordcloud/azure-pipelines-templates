@@ -1,5 +1,7 @@
+# Copyright 2021-2022 Nordcloud Oy or its affiliates. All Rights Reserved.
+
 # Version 1.0.0
-# Maintainer: Tadas Kazlauskas
+# Maintainer: Tadas Kazlauskas at tadas.kazlauskas@nordcloud.com
 
 # Parameters:
 # jf_server_id: JFrog server id (default: nordcloud.jfrog.io)
