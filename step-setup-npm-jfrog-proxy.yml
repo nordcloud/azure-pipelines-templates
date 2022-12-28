@@ -9,7 +9,7 @@
 
 parameters:
 - name: jf_server_id 
-  default: 
+  default: nordcloud.jfrog.io
 - name: jf_npm_repo 
   default: npm-virtual
 - name: jf_user 
