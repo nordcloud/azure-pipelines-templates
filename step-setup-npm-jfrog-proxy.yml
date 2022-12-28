@@ -1,27 +1,42 @@
 # Version 1.0.0
 # Maintainer: Tadas Kazlauskas
-# You need your global variables set anyways
+
 # Parameters:
-# JF_SERVER_ID: JFrog server id (default: nordcloud.jfrog.io)
-# JF_ACCESS_TOKEN: JFrog access token
-# JF_NPM_REPO: JFrog virtual repository name
-# JFROG_CLI_VERSION: JFrog CLI version
+# jf_server_id: JFrog server id (default: nordcloud.jfrog.io)
+# jf_npm_repo: JFrog access token (default: npm-virtual)
+# jf_user: JFrog user used to access artifactory (default: pat-devops)
+# jf_access_token: JFrog access token
+# work_dir: pipeline stage working direcorty where .npmrc is created
+
+# Example usage
+# steps:
+#   - task: NodeTool@0
+#     inputs:
+#       versionSpec: $(NODE_VERSION)
+#   - template: step-setup-npm-jfrog-proxy.yml@nordcloud-templates
+#     parameters:
+#       jf_access_token: $(JF_ACCESS_TOKEN)
+#       work_dir: ./$(ROOT_DIR)
 
 parameters:
-- name: jf_server_id 
-  default: nordcloud.jfrog.io
-- name: jf_npm_repo 
-  default: npm-virtual
-- name: jf_user 
-  default: pat-devops
-- name: jf_access_token 
+- name: 'jf_server_id'
+  type: 'string'
+  default: 'nordcloud.jfrog.io'
+- name: 'jf_npm_repo'
+  type: 'string'
+  default: 'npm-virtual'
+- name: 'jf_user'
+  type: 'string'
+  default: 'pat-devops'
+- name: 'jf_access_token'
+  type: 'string'
   default: 
-- name: work_dir 
+- name: 'work_dir'
+  type: 'string'
   default: 
 
 steps:
   - script: |
-      pwd
       echo "Creating .npmrc"
       echo "registry=https://${{ parameters.jf_server_id }}/artifactory/api/npm/${{ parameters.jf_npm_repo }}/" > .npmrc
       echo "@nordcloud:registry=https://${{ parameters.jf_server_id }}/artifactory/api/npm/${{ parameters.jf_npm_repo }}/" >> .npmrc
