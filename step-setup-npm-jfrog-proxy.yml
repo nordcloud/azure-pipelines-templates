@@ -39,7 +39,7 @@ parameters:
 
 steps:
   - script: |
-      echo "Creating .npmrc"
+      echo "Creating .npmrc pointing to JFrog Artifactory"
       echo "registry=https://${{ parameters.jf_server_id }}/artifactory/api/npm/${{ parameters.jf_npm_repo }}/" > .npmrc
       echo "@nordcloud:registry=https://${{ parameters.jf_server_id }}/artifactory/api/npm/${{ parameters.jf_npm_repo }}/" >> .npmrc
       echo -n "//${{ parameters.jf_server_id }}/artifactory/api/npm/${{ parameters.jf_npm_repo }}/:" >> .npmrc
