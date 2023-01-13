@@ -10,9 +10,6 @@
 # jf_access_token: JFrog access token
 # work_dir: pipeline stage working direcorty where .npmrc is created
 
-# JFrog NMP usage documentation:
-# https://nordcloud.atlassian.net/wiki/spaces/RND/pages/4123492446/NPM+local+environment+configuration+for+JFrog+NPM+proxy
-
 # Example usage
 # steps:
 #   - task: NodeTool@0
