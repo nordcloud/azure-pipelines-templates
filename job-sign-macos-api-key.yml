@@ -28,7 +28,7 @@ parameters:
 jobs:
 - job: SignMacOSBinary
   pool:
-    vmImage: 'macOS-10.15'
+    vmImage: 'macOS-latest'
   steps:
   - task: GoTool@0
     inputs:
