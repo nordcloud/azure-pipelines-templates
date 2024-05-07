@@ -28,7 +28,7 @@ parameters:
 jobs:
 - job: SignMacOSBinary
   pool:
-    vmImage: 'macOS-11'
+    vmImage: 'macOS-latest'
   steps:
   - task: GoTool@0
     inputs:
@@ -54,7 +54,8 @@ jobs:
   - script: |
       git clone https://github.com/nordcloud/gon.git
       cd gon
-      make build
+      mkdir -p dist
+      GOOS=darwin GOARCH=amd64 go build -o ./dist/gon ./cmd/gon
       cp ./dist/gon ../bin/gon
     displayName: InstallGON
     workingDirectory: $(Build.SourcesDirectory)
