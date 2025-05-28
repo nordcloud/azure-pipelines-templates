@@ -18,7 +18,7 @@ parameters:
 steps:
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '3.7'
+    versionSpec: '3.9'
 - script: |
     pip install boto3
   displayName: Install dependencies
@@ -26,8 +26,9 @@ steps:
   inputs:
     scriptSource: inline
     script: |
-      import boto3
       import os
+
+      import boto3
 
       client = boto3.client('dynamodb')
 
